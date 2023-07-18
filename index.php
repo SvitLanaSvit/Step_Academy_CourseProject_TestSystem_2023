@@ -1,4 +1,5 @@
 <?
+ob_start();
 session_start();
 ?>
 <!DOCTYPE html>
@@ -11,6 +12,7 @@ session_start();
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="icon" href="/assets//favicon/favicon.ico" type="image/x-icon">
 
     <style>
         html {
@@ -35,7 +37,6 @@ session_start();
         section>.container>.row>.col>.container>.row>.col {
             border: 1px solid black;
             border-radius: 10px;
-            /* box-shadow: 0px 1px 8px 4px #fff; */
             background-color: rgba(47, 79, 79, 0.8)
         }
 
@@ -77,6 +78,21 @@ session_start();
 
         .text-body-secondary{
             color: white !important;
+        }
+
+        .table>thead>tr>th, .table>tbody>tr>td{
+            background-color: transparent;
+            color: white;
+        }
+
+        .questions, .answers, .users, .results{
+            border-radius: 10px;
+            background-color: rgba(47, 79, 79, 0.8);
+            padding: 10px;
+        }
+
+        .answers{
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -169,6 +185,30 @@ session_start();
                             break;
                         case 10:
                             include_once("pages/edit/answeredit.php");
+                            break;
+                        case 11:
+                            include_once("pages/edit/useredit.php");
+                            break;
+                        case 12:
+                            include_once("pages/user/addphotouser.php");
+                            break;
+                        case 13:
+                            include_once("pages/user/edituser.php");
+                            break;
+                        case 14:
+                            include_once("pages/user/removeuser.php");
+                            break;
+                        case 15:
+                            include_once("pages/admin/questions.php");
+                            break;
+                        case 16:
+                            include_once("pages/admin/answers.php");
+                            break;
+                        case 17:
+                            include_once("pages/admin/users.php");
+                            break;
+                        case 18:
+                            include_once("pages/admin/results.php");
                             break;
                         default:
                             echo "<h2>Page does not found!</h2>";

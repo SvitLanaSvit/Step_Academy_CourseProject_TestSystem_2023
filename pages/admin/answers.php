@@ -1,43 +1,54 @@
-<table class="table table-stripped mb-3">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Question</th>
-            <th>Answer</th>
-            <th>Is true answer</th>
-            <th></th>
-
-        </tr>
-    </thead>
-    <tbody>
-        <?
-        $ps1 = $pdo->prepare("SELECT a.Id, q.Question, a.AnswerText, a.AnswerPhoto, a.IsRealAnswer FROM answers a LEFT JOIN questions q ON a.QuestionId = q.Id ORDER BY Id ASC");
-        $ps1->execute();
-        $ps1->setFetchMode(PDO::FETCH_NUM);
-        while ($row = $ps1->fetch()) {
-            echo "<tr>";
-            echo "<td>$row[0]</td>";
-            if(strlen($row[1]) <= 20){
-                echo "<td>$row[1]</td>";
-            }else{
-                echo "<td>".substr($row[1], 0,20)."...</td>";
-            }
-            if ($row[2] != '') {
-                if(strlen($row[2]) <= 10){
-                    echo "<td>$row[2]</td>";
+<div style="margin-bottom: 10px;">
+    <button class="btn btn-secondary" onclick="showHidden()">Show list of Anwers</button>
+</div>
+<div class="answers" style="display: none;">
+    <h3>Answers</h3>
+    <table class="table table-stripped mb-3">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Question</th>
+                <th>Answer</th>
+                <th>Is true answer</th>
+                <th>Delete</th>
+                <th></th>
+    
+            </tr>
+        </thead>
+        <tbody>
+            <?
+            include_once("/OSPanel/domains/CourseProject/functions/functions.php");
+            $pdo = connect();
+    
+            $ps1 = $pdo->prepare("SELECT a.Id, q.Question, a.AnswerText, a.AnswerPhoto, a.IsRealAnswer FROM answers a LEFT JOIN questions q ON a.QuestionId = q.Id ORDER BY Id ASC");
+            $ps1->execute();
+            $ps1->setFetchMode(PDO::FETCH_NUM);
+            while ($row = $ps1->fetch()) {
+                echo "<tr>";
+                echo "<td>$row[0]</td>";
+                if(strlen($row[1]) <= 50){
+                    echo "<td>$row[1]</td>";
                 }else{
-                    echo "<td>".substr($row[2], 0,10)."...</td>";
+                    echo "<td>".substr($row[1], 0,50)."...</td>";
                 }
-            } else {
-                echo "<td><img src='$row[3]' alt='$row[3]' style='width: 60px'></td>";
+                if ($row[2] != '') {
+                    if(strlen($row[2]) <= 20){
+                        echo "<td>$row[2]</td>";
+                    }else{
+                        echo "<td>".substr($row[2], 0,20)."...</td>";
+                    }
+                } else {
+                    echo "<td><img src='$row[3]' alt='$row[3]' style='width: 60px' onmouseover='anlangerImage(this)' onmouseout='resetImage(this)'></td>";
+                }
+                echo "<td>$row[4]</td>";
+                echo "<td><input type='checkbox' class='form-check-input' name='delanswers[]' value='" . $row[0] . "' form='answerForm'/></td>";
+                echo "<td><button class='btn btn-sm btn-warning' onclick='editAnswer($row[0])'>Edit</button></td>";
+                echo "</tr>";
             }
-            echo "<td>$row[4]</td>";
-            echo "<td><button class='btn btn-sm btn-warning' onclick='editAnswer($row[0])'>Edit</button></td>";
-            echo "</tr>";
-        }
-        ?>
-    </tbody>
-</table>
+            ?>
+        </tbody>
+    </table>
+</div>
 
 <form method="post" id="answerForm" enctype="multipart/form-data">
     <div class="mb-3">
@@ -55,7 +66,7 @@
     <div class="mb-3">
             <label for="answerType">Answer type</label>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="answerType" value="text" id="textAnswer" required>
+                <input class="form-check-input" type="radio" name="answerType" value="text" id="textAnswer">
                 <label class="form-check-label" for="textAnswer">Answer text</label>
             </div>
             <div>
@@ -75,7 +86,7 @@
     </div>
 
     <div class="mb-3 w-50">
-        <select class="form-select" aria-label="Default select example" name='isRealAnswer' required>
+        <select class="form-select" aria-label="Default select example" name='isRealAnswer'>
             <option value=-1 selected>Choose is true answer</option>
             <option value=0>false</option>
             <option value=1>true</option>
@@ -84,6 +95,7 @@
 
     <div class="btn-group">
         <button type="submit" class="btn btn-sm btn-success" name='addanswer'>Add</button>
+        <button type="submit" class="btn btn-sm btn-danger" name='delanswer'>Delete</button>
     </div>
 </form>
 
@@ -106,7 +118,39 @@
         textAnswerField.style.display = 'none';
         photoAnswerField.style.display = 'block';
     });
+
+    function showHidden(){
+        const answerDiv = document.querySelector('.answers');
+        const showButton = document.querySelector('.btn-secondary');
+
+        if(answerDiv.style.display === 'none'){
+            answerDiv.style.display = 'block';
+            showButton.textContent = 'Hide List of Answers';
+        }
+        else{
+            answerDiv.style.display = 'none';
+            showButton.textContent = 'Show list of Anwers';
+        }
+    }
+
+    function anlangerImage(imageElement){
+        imageElement.style.width = '250px';
+        imageElement.style.height = 'auto';
+        imageElement.style.cursor = 'pointer';
+    }
+
+    function resetImage(imageElement){
+        imageElement.style.width = '60px';
+        imageElement.style.height = 'auto';
+        imageElement.style.cursor = 'default';
+    }
 </script>
+
+<style>
+    img{
+        transition: width 0.3s ease;
+    }
+</style>
 
 <?
 if (isset($_POST['addanswer'])) {
@@ -127,6 +171,13 @@ if (isset($_POST['addanswer'])) {
                 location = 'index.php?page=3';
             }, 10)</script>";
     } 
+
+    if(!isset($_POST['answerType'])){
+        echo "<script>alert(`Choose type of Answer!`)</script>";
+        echo "<script>setTimeout(()=>{
+                location = 'index.php?page=3';
+            }, 10)</script>";
+    }
 
     if ($isRealAnswer == '-1') {
         echo "<script>alert(`Choose true or false by answer!`)</script>";
@@ -168,5 +219,14 @@ if (isset($_POST['addanswer'])) {
             } 
         }
     } 
+}
+
+if(isset($_POST['delanswers'])){
+    $delanswers = $_POST['delanswers'];
+    foreach($delanswers as $answerId){
+        deleteAnswer($answerId);
+    }
+
+    echo "<script>location = document.URL</script>";
 }
 ?>

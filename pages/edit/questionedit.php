@@ -32,12 +32,12 @@ if(isset($_GET['questionId'])){
     <h3>EDIT QUESTION</h3>  
     <form method="post" id="questionForm" enctype="multipart/form-data">
         <input type="hidden" name="questionId" id="questionId" value="<?echo $id?>">
-        <div class="mb-3 w-25">
+        <div class="mb-3 w-50">
             <textarea class="form-control" placeholder="Add new question..." id="floatingTextarea"  name="question" required style="height: 150px;"><?echo $question?></textarea>
             <label for="floatingTextarea">Ouestion</label>
         </div>
 
-        <div class="mb-3 w-25">
+        <div class="mb-3 w-50">
             <label for="formFile" class="form-label">Load Photo</label>
             <input class="form-control" type="file" id="formFile" name="photo">
             <?if($filepath != null){?>

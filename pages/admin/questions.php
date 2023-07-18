@@ -1,39 +1,52 @@
-<table class="table table-stripped mb-3">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Question</th>
-            <th>Image path</th>
-            <th>Category</th>
-            <th>Is Blocked</th>
-            <th>Delete</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        <?
-        $ps1 = $pdo->prepare("SELECT q.Id, SUBSTR(q.Question, 1, 20), q.ImagePath, c.Category, q.IsBlocked FROM questions q LEFT JOIN categories c ON c.Id = q.CategoryId ORDER BY Id ASC");
-        $ps1->execute();
-        $ps1->setFetchMode(PDO::FETCH_NUM);
-        while($row = $ps1->fetch()){
-            echo "<tr>";
-            echo "<td>$row[0]</td>";
-            echo "<td>$row[1]...</td>";
-            echo "<td><img src='$row[2]' style='width: 60px' alt='$row[2]'></td>";
-            echo "<td>$row[3]</td>";
-            echo "<td>$row[4]</td>";
-            if($row[4] == 0){
-                echo "<td><input type='checkbox' class='form-check-input' name='delquestions[]' value='" . $row[0] . "' form='questionForm'/></td>";
+<div style="margin-bottom: 10px;">
+    <button class="btn btn-secondary" onclick="showHidden()">Show list of Questions</button>
+</div>
+<div class="questions" style="display: none;">
+    <h3>Questions</h3>
+    <table class="table table-stripped mb-3">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Question</th>
+                <th>Image path</th>
+                <th>Category</th>
+                <th>Is Blocked</th>
+                <th>Delete</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?
+            include_once("/OSPanel/domains/CourseProject/functions/functions.php");
+            $pdo = connect();
+            $ps1 = $pdo->prepare("SELECT q.Id, q.Question, q.ImagePath, c.Category, q.IsBlocked FROM questions q LEFT JOIN categories c ON c.Id = q.CategoryId ORDER BY Id ASC");
+            $ps1->execute();
+            $ps1->setFetchMode(PDO::FETCH_NUM);
+            while($row = $ps1->fetch()){
+                echo "<tr>";
+                echo "<td>$row[0]</td>";
+                if(strlen($row[1]) <= 50){
+                    echo "<td>$row[1]</td>";
+                }
+                else{
+                    echo "<td>".substr($row[1], 0, 50)."...</td>";
+                }
+                echo "<td><img src='$row[2]' style='width: 60px' alt='$row[2]' onmouseover='enlargeImage(this)' onmouseout='resetImage(this)'></td>";
+                echo "<td>$row[3]</td>";
+                echo "<td>$row[4]</td>";
+                if($row[4] == 0){
+                    echo "<td><input type='checkbox' class='form-check-input' name='delquestions[]' value='" . $row[0] . "' form='questionForm'/></td>";
+                }
+                else{
+                    echo "<td></td>";
+                }
+                echo "<td><button class='btn btn-sm btn-warning' onclick='editQuestion($row[0])'>Edit</button></td>";
+                echo "</tr>";
             }
-            else{
-                echo "<td></td>";
-            }
-            echo "<td><button class='btn btn-sm btn-warning' onclick='editQuestion($row[0])'>Edit</button></td>";
-            echo "</tr>";
-        }
-        ?>
-    </tbody>
-</table>
+            ?>
+        </tbody>
+    </table>
+</div>
 
 <form method="post" id="questionForm" enctype="multipart/form-data">
     <div class="mb-3">
@@ -68,7 +81,39 @@
     function editQuestion(questionId){
         window.location.href = 'index.php?page=9&questionId=' + questionId;
     }
+
+    function showHidden(){
+        const questionDiv = document.querySelector('.questions');
+        const showButton = document.querySelector('.btn-secondary');
+
+        if(questionDiv.style.display === 'none'){
+            questionDiv.style.display = 'block';
+            showButton.textContent = 'Hide list of Questions'
+        }
+        else{
+            questionDiv.style.display = 'none';
+            showButton.textContent = 'Show list of Questions'
+        }
+    }
+
+    function enlargeImage(imageElement){
+        imageElement.style.width = '250px';
+        imageElement.style.height = 'auto';
+        imageElement.style.cursor = 'pointer';
+    }
+
+    function resetImage(imageElement){
+        imageElement.style.width = '60px';
+        imageElement.style.height = 'auto';
+        imageElement.style.cursor = 'default';
+    }
 </script>
+
+<style>
+    img{
+        transition: width 0.3s ease;
+    }
+</style>
 
 <?
 if(isset($_POST['addquestion'])){

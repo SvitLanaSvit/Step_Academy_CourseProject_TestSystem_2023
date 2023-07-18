@@ -31,7 +31,7 @@ $ct2 = "CREATE TABLE IF NOT EXISTS $tableNameRoles(
 
 $ct3 = "CREATE TABLE IF NOT EXISTS $tableNameQuestions(
     Id int primary key not null auto_increment,
-    Question varchar(1024) not null unique,
+    Question varchar(1024) not null,
     ImagePath varchar(255),
     CategoryId int not null,
     IsBlocked bool not null default false,
@@ -53,15 +53,6 @@ $ct5 = "CREATE TABLE IF NOT EXISTS $tableNameUsers(
     Photo mediumblob,
     RoleId int not null default 2,
     FOREIGN KEY (RoleId) REFERENCES $tableNameRoles(Id) ON DELETE CASCADE) default charset='utf8'";
-
-$ct6 = "CREATE TABLE IF NOT EXISTS $tableNameResults(
-    Id int primary key not null auto_increment,
-    UserId int not null,
-    CategoryId int not null,
-    DateTest date not null,
-    Result int not null,
-    FOREIGN KEY (UserId) REFERENCES $tableNameUsers(Id) ON DELETE CASCADE,
-    FOREIGN KEY (CategoryId) REFERENCES categories(Id) ON DELETE CASCADE) default charset='utf8'";
 
 $ct6 = "CREATE TABLE IF NOT EXISTS $tableNameResults(
     Id int primary key not null auto_increment,

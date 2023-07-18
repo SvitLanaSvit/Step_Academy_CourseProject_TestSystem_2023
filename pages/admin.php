@@ -18,16 +18,32 @@ $pdo = connect();
             ?>
         </div>
         <div class="col" style="padding: 5px;">
-            <h3>Questions</h3>
-            <?
-            include_once("admin/questions.php");
-            ?>
+            <a href="index.php?page=15" style="text-decoration: none; display: flex;">
+                <h3>Questions</h3>
+                <img src="/assets/another/new_click.png" style="width: 30px; height: 30px;" alt="icon_click">
+            </a>
         </div>
         <div class="col" style="padding: 5px;">
-            <h3>Answers</h3>
+            <a href="index.php?page=16" style="text-decoration: none; display: flex;">
+                <h3>Answers</h3>
+                <img src="/assets/another/new_click.png" style="width: 30px; height: 30px;" alt="icon_click">
+            </a>
+        </div>
+        <div class="col" style="padding: 5px;">
+            <a href="index.php?page=17" style="text-decoration: none; display: flex;">
+                <h3>Users</h3>
+                <img src="/assets/another/new_click.png" style="width: 30px; height: 30px;" alt="icon_click">
+            </a>
+        </div>
+        <div class="col" style="padding: 5px;">
+            <a href="index.php?page=18" style="text-decoration: none; display: flex;">
+                <h3>Results</h3>
+                <img src="/assets/another/new_click.png" style="width: 30px; height: 30px;" alt="icon_click">
+            </a>
+            <!-- <h3>Results</h3>
             <?
-            include_once("admin/answers.php");
-            ?>
+            include_once("admin/results.php");
+            ?> -->
         </div>
     </div>
 </div>

@@ -73,7 +73,7 @@
         </div>
     </div>
     <hr>
-    <div class="container">
+    <div class="container p-3" style="background-color: rgba(47, 79, 79, 0.8); border-radius: 10px;">
         <h3>RESULTS OF TESTS</h3>
         <table class="table table-striped">
             <thead>

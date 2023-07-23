@@ -92,6 +92,21 @@ function getCategoryById($id)
     return null;
 }
 
+function getCategoryId($category)
+{
+    $pdo = connect();
+
+    try {
+        $ps = $pdo->prepare("SELECT Id FROM categories WHERE Category = '$category'");
+        $ps->execute();
+        $row = $ps->fetch();
+        return  (int)$row['Id'];
+    } catch (PDOException $ex) {
+        echo "<div class='alert alert-danger'>There is a problem with get Id category by category name!" .$ex->getMessage()."</div>";
+    }
+    return null;
+}
+
 function getRoleById($id)
 {
     $pdo = connect();
@@ -131,10 +146,38 @@ function getAnswerById($id)
         $row = $ps->fetch();
         return $row;
     } catch (PDOException $ex) {
+        echo "<div class='alert alert-danger'>There is a problem with get answer by id!". $ex->getMessage() ."</div>";
     }
     return null;
 }
 
+function getAnswerByQuestionId($id)
+{
+    $pdo = connect();
+    try {
+        $ps = $pdo->prepare("SELECT an.Id as AnswerId, an.AnswerText, an.AnswerPhoto, an.IsRealAnswer, q.Id as QuestionId FROM answers an LEFT JOIN questions q ON q.Id = an.QuestionId WHERE q.Id = $id");
+        $ps->execute();
+        return $ps;
+    } catch (PDOException $ex) {
+        echo "<div class='alert alert-danger'>There is a problem with get answers by question id!". $ex->getMessage() ."</div>";
+    }
+    return null;
+}
+
+
+function getRealAnswerByQuestionId($id)
+{
+    $pdo = connect();
+    try {
+        $ps = $pdo->prepare("SELECT an.Id as AnswerId, an.AnswerText, an.AnswerPhoto, an.IsRealAnswer, q.Id as QuestionId FROM answers an LEFT JOIN questions q ON q.Id = an.QuestionId WHERE q.Id = $id and an.IsRealAnswer = true");
+        $ps->execute();
+        $row = $ps->fetch();
+        return $row;
+    } catch (PDOException $ex) {
+        echo "<div class='alert alert-danger'>There is a problem with get real answer by question id!". $ex->getMessage() ."</div>";
+    }
+    return null;
+}
 function getUserById($id){
     $pdo = connect();
     try {
@@ -148,14 +191,38 @@ function getUserById($id){
     return null;
 }
 
-function getAllCategories()
+function getAllCategories($category = '')
 {
     $pdo = connect();
 
     try {
-        $ps = $pdo->prepare("SELECT * FROM categories");
-        $ps->execute();
-        return $ps;
+        if($category == ''){
+            $ps = $pdo->prepare("SELECT * FROM categories");
+            $ps->execute();
+            return $ps;
+        }
+        else{
+            $ps = $pdo->prepare("SELECT * FROM categories WHERE Category = $category");
+            $ps->execute();
+            $row = $ps->fetch();
+            return $ps;
+        }
+        
+    } catch (PDOException $ex) {
+        echo "<div class='alert alert-danger'>There is a problem with get all categories!</div>";
+    }
+    return null;
+}
+
+function getAllCategoriesIsNotBloked()
+{
+    $pdo = connect();
+
+    try {
+        $ps = $pdo->prepare("SELECT * FROM categories WHERE IsBlocked = 0");
+            $ps->execute();
+            return $ps;
+        
     } catch (PDOException $ex) {
         echo "<div class='alert alert-danger'>There is a problem with get all categories!</div>";
     }
@@ -170,6 +237,30 @@ function getAllQuestions()
         $ps = $pdo->prepare("SELECT * FROM questions");
         $ps->execute();
         return $ps;
+    } catch (PDOException $ex) {
+        echo "<div class='alert alert-danger'>There is a problem with get all questions!</div>";
+    }
+    return null;
+}
+
+function getAllQuestionsIsNotBlockedLanguageRandom($category)
+{
+    $pdo = connect();
+
+    try {
+        $ps = $pdo->prepare("SELECT q.Id as IdQuestion, q.Question, q.ImagePath as ImagePathQuestion, q.CategoryId, q.IsBlocked as IsBlockedQuestion, ct.Id as IdCategory, ct.Category, ct.IsBlocked as IsBlockedCategory, ct.ImagePath as ImagePathCategory FROM questions q LEFT JOIN categories ct ON ct.Id = q.CategoryId WHERE q.IsBlocked = 0 and Category = '$category'");
+        $ps->execute();
+        $questions = $ps->fetchAll();
+
+        if(count($questions) >= 20){
+            // Randomly shuffle the questions array
+            shuffle($questions);
+
+            // Select the first 10 questions from the shuffled array
+            $randomQuestions = array_slice($questions, 0, 20);
+            return $randomQuestions;
+        }
+        else return $questions;
     } catch (PDOException $ex) {
         echo "<div class='alert alert-danger'>There is a problem with get all questions!</div>";
     }
@@ -339,5 +430,21 @@ function addPhotoUserToSQL($photoData, $userId){
         echo "<div class='alert alert-success'>The photo added!</div>";
     }catch(PDOException $ex){
         echo "<div class='alert alert-danger'>There is a problem with add the photo of user to sql " . $ex->getMessage() . "!</div>";
+    }
+}
+
+function writeResultToSQLFromTest($userId, $categoryId, $dateTest, $result){
+    $pdo = connect();
+
+    try{
+        $ps = $pdo->prepare("INSERT INTO results(`UserId`, `CategoryId`, `DateTest`, `Result`)VALUES(?,?,?,?)");
+        $ps->bindParam(1, $userId, PDO::PARAM_INT);
+        $ps->bindParam(2, $categoryId, PDO::PARAM_INT);
+        $ps->bindParam(3, $dateTest);
+        $ps->bindParam(4, $result, PDO::PARAM_INT);
+        $ps->execute();
+        echo "<div class='alert alert-success'>The result of test added!</div>";
+    }catch(PDOException $ex){
+        echo "<div class='alert alert-danger'>There is a problem with add to rusults " . $ex->getMessage() . "!</div>";
     }
 }

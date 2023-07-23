@@ -64,7 +64,7 @@ session_start();
             text-decoration: underline;
         }
 
-        h2, label, p{
+        h2,h4, label, p{
             color: white;
         }
 
@@ -210,8 +210,22 @@ session_start();
                         case 18:
                             include_once("pages/admin/results.php");
                             break;
+                        case 19:
+                            if(isset($_GET['category'])){
+                                $category = $_GET['category'];
+                                include_once("pages/tests/testbycategory.php");
+                                break;
+                                // switch($category){
+                                //     case $category:
+                                //         include_once("pages/tests/testbycategory.php");
+                                //         break;
+                                //     default:
+                                //         echo "<h2>Page in case 19 was not found!</h2>";
+                                // }
+                            }
+                            break;
                         default:
-                            echo "<h2>Page does not found!</h2>";
+                            echo "<h2>Page was not found!</h2>";
                     }
                     ?>
                 </div>

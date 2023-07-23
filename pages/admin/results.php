@@ -26,9 +26,9 @@
                 echo "<td>$row[0]</td>";
                 echo "<td>$row[1]</td>";
                 if($row[2] != null){
-                    $base64image = base64_encode($row[3]);
+                    $base64image = base64_encode($row[2]);
                     $dataUrl = 'data:image/jpeg;base64,'.$base64image;
-                    echo "<td><img src=$dataUrl alt='userId_".$row[0]."'></td>";
+                    echo "<td><img style='width: 60px; height: auto;' src=$dataUrl alt='userId_".$row[0]."'></td>";
                 }
                 else{
                     echo "<td></td>";

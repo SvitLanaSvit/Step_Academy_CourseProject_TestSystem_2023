@@ -42,3 +42,30 @@ if(isset($_GET['userId'])){
         </div>
     </form>     
 </div>
+<?
+if(isset($_POST['edituser'])){
+    $userId = $_POST['userId'];
+    $email = $_POST['email'];
+    $photoData = '';
+
+    if($_FILES && $_FILES['photo']['error'] == UPLOAD_ERR_OK){
+        $uploadPhoto = $_FILES['photo'];
+        $fileTmpPath = $uploadPhoto['tmp_name'];
+        $filesize = $uploadPhoto['size'];
+
+        $maxSize = 500 * 1024; //500kB
+        if($filesize > $maxSize ){
+            echo "<div class='alert alert-danger'>The size of the photo is very big!</div>";
+        }
+        else{
+            $photoData = file_get_contents($fileTmpPath);
+            updateUserWithPhoto($userId, $email, $photoData);
+        }
+    }
+    else{
+        updateUserWithPhoto($userId, $email, $photoData);
+    }
+
+    
+}
+?>

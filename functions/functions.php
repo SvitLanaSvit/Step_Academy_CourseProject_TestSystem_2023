@@ -251,13 +251,14 @@ function getAllQuestionsIsNotBlockedLanguageRandom($category)
         $ps = $pdo->prepare("SELECT q.Id as IdQuestion, q.Question, q.ImagePath as ImagePathQuestion, q.CategoryId, q.IsBlocked as IsBlockedQuestion, ct.Id as IdCategory, ct.Category, ct.IsBlocked as IsBlockedCategory, ct.ImagePath as ImagePathCategory FROM questions q LEFT JOIN categories ct ON ct.Id = q.CategoryId WHERE q.IsBlocked = 0 and Category = '$category'");
         $ps->execute();
         $questions = $ps->fetchAll();
+        $countOfQuestions = 5;
 
-        if(count($questions) >= 20){
+        if(count($questions) >= $countOfQuestions){
             // Randomly shuffle the questions array
             shuffle($questions);
 
             // Select the first 10 questions from the shuffled array
-            $randomQuestions = array_slice($questions, 0, 20);
+            $randomQuestions = array_slice($questions, 0, $countOfQuestions);
             return $randomQuestions;
         }
         else return $questions;
@@ -399,6 +400,31 @@ function updateUser($roleId, $userId){
     }
 }
 
+function updateUserWithPhoto($userId, $email, $photoData){
+    $pdo = connect();
+
+    try{
+        if($photoData == ''){
+            $ps = $pdo->prepare("UPDATE users SET Email = ? WHERE Id = ?");
+            $ps->bindParam(1, $email);
+            $ps->bindParam(2, $userId);
+            $ps->execute();
+            echo "<div class='alert alert-success'>The update was successful!</div>";
+        }
+        else{
+            $ps = $pdo->prepare("UPDATE users SET Email = ?, Photo = ? WHERE Id = ?");
+            $ps->bindParam(1, $email);
+            $ps->bindParam(2, $photoData);
+            $ps->bindParam(3, $userId);
+            $ps->execute();
+            echo "<div class='alert alert-success'>The update was successful!</div>";
+        }
+        
+    }catch(PDOException $ex){
+        echo "<div class='alert alert-danger'>There is a problem with update user with photo by edit " . $ex->getMessage() . "!</div>";
+    }
+}
+
 function deleteQuestion($questionId)
 {
     $pdo = connect();
@@ -416,6 +442,14 @@ function deleteAnswer($answerId){
 
     $ps = $pdo->prepare("DELETE FROM answers WHERE Id = ?");
     $ps->bindParam(1, $answerId);
+    $ps->execute();
+}
+
+function deleteUserFromSQL($userId){
+    $pdo = connect();
+
+    $ps = $pdo->prepare("DELETE FROM users WHERE Id = ?");
+    $ps->bindParam(1, $userId);
     $ps->execute();
 }
 

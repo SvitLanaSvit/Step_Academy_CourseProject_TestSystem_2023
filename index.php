@@ -211,18 +211,22 @@ session_start();
                             include_once("pages/admin/results.php");
                             break;
                         case 19:
-                            if(isset($_GET['category'])){
-                                $category = $_GET['category'];
-                                include_once("pages/tests/testbycategory.php");
+                            if(isset($_SESSION['id'])){
+                                if(isset($_GET['category'])){
+                                    $category = $_GET['category'];
+                                    include_once("pages/tests/testbycategory.php");
+                                    break;
+                                }
                                 break;
-                                // switch($category){
-                                //     case $category:
-                                //         include_once("pages/tests/testbycategory.php");
-                                //         break;
-                                //     default:
-                                //         echo "<h2>Page in case 19 was not found!</h2>";
-                                // }
-                            }
+                            }else{
+                                echo "<script>alert('Only a registered user can take the test!');</script>";
+                                echo "<script>
+                                            setTimeout(()=>{
+                                                location = 'index.php?page=1'
+                                            }, 10);
+                                        </script>";
+                                break;
+                            } 
                             break;
                         default:
                             echo "<h2>Page was not found!</h2>";

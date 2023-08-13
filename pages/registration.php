@@ -91,12 +91,11 @@
                         $userToSQL = new User($login, $hashPassword, $email);
 
                         register($userToSQL);
-                        echo "<script>alert('Registration was successful!')</script>";
-                        echo "<script>
-                                setTimeout(()=>{
-                                    location = 'index.php?page=5'
-                                }, 10);
-                            </script>";
+                        // echo "<script>
+                        //         setTimeout(()=>{
+                        //             location = 'index.php?page=5'
+                        //         }, 10);
+                        //     </script>";
                     }
                 }  
             }

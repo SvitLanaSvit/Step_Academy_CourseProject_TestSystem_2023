@@ -40,7 +40,7 @@ $ct3 = "CREATE TABLE IF NOT EXISTS $tableNameQuestions(
 $ct4 = "CREATE TABLE IF NOT EXISTS $tableNameAnswers(
     Id int primary key not null auto_increment,
     QuestionId int not null,
-    AnswerText varchar(1024) unique,
+    AnswerText varchar(1024),
     AnswerPhoto varchar(255) unique,
     IsRealAnswer bool not null,
     FOREIGN KEY (QuestionId) REFERENCES $tableNameQuestions(Id) ON DELETE CASCADE) default charset='utf8'";

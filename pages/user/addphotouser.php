@@ -41,16 +41,12 @@ if(isset($_POST['addphoto'])){
         }
         else{
             $photoData = file_get_contents($fileTmpPath);
-            //$photoData = addslashes($photoData); // Escaping special characters
-    
             addPhotoUserToSQL($photoData, $userId);
         }
     }
     else{
         echo "<div class='alert alert-danger'>There is a problem with get id of user!</div>";
     }
-    
 }
 ?>
-
 </html>

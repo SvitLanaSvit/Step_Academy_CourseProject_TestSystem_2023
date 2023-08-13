@@ -30,14 +30,25 @@ function validatePassword($password)
 
 function register($user)
 {
-    $pdo = connect();
+    try{
+        $pdo = connect();
 
-    $ps = $pdo->prepare("INSERT INTO users(`Login`,`Password`,`Email`)VALUES(?,?,?)");
-    $ps->bindParam(1, $user->login);
-    $ps->bindParam(2, $user->password);
-    $ps->bindParam(3, $user->email);
+        $ps = $pdo->prepare("INSERT INTO users(`Login`,`Password`,`Email`)VALUES(?,?,?)");
+        $ps->bindParam(1, $user->login);
+        $ps->bindParam(2, $user->password);
+        $ps->bindParam(3, $user->email);
 
-    $ps->execute();
+        $ps->execute();
+        echo "<div class='alert alert-success'>Registration was successful! Go now to LOG IN!</div>";
+    }catch(PDOException $ex){
+        if($ex->getCode() == 23000){
+            echo "<div class='alert alert-danger'>The login is already exists!</div>";
+        }
+        else{
+            echo "<div class='alert alert-danger'>".$ex->getMessage()."</div>";
+        }
+    }
+    
 }
 
 function getUsersFromSQL()
@@ -251,7 +262,7 @@ function getAllQuestionsIsNotBlockedLanguageRandom($category)
         $ps = $pdo->prepare("SELECT q.Id as IdQuestion, q.Question, q.ImagePath as ImagePathQuestion, q.CategoryId, q.IsBlocked as IsBlockedQuestion, ct.Id as IdCategory, ct.Category, ct.IsBlocked as IsBlockedCategory, ct.ImagePath as ImagePathCategory FROM questions q LEFT JOIN categories ct ON ct.Id = q.CategoryId WHERE q.IsBlocked = 0 and Category = '$category'");
         $ps->execute();
         $questions = $ps->fetchAll();
-        $countOfQuestions = 5;
+        $countOfQuestions = 20;
 
         if(count($questions) >= $countOfQuestions){
             // Randomly shuffle the questions array

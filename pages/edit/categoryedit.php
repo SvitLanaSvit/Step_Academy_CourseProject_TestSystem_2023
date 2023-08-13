@@ -48,10 +48,8 @@
                 <label for="formFile" class="form-label">Load Photo</label>
                 <input class="form-control" type="file" id="formFile" name="photo">
                 <? if ($filepath != null) { ?>
-                    <!-- <input type="hidden" name="currentFilePath" value="<?php echo $filepath; ?>"> -->
                     <p class="mt-2">Current image: <img src="<? echo $filepath; ?>" alt="Current image" style="width: 200px;"></p>
                 <? } else { ?>
-                    <!-- <input type="hidden" name="currentFilePath" value=""> -->
                     <p class="mt-2">Category has not any image!</p>
                 <? } ?>
             </div>
@@ -66,7 +64,6 @@
         $id = $_POST['categoryId'];
         $category = $_POST['category'];
         $isBlocked = isset($_POST['isBlocked']) ? 1 : 0;
-        //$currentFilePath = $_POST['currentFilePath'];
 
         updateCategory($category, $isBlocked, $id);
     }
